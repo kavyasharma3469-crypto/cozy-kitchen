@@ -1,1 +1,244 @@
+:root {
+    --bg-dark: #050508;
+    --card-bg: rgba(20, 24, 35, 0.6);
+    --neon-pink: #ff007f;
+    --neon-cyan: #00f3ff;
+    --neon-purple: #9d4edd;
+    --text-main: #ffffff;
+    --text-sub: #8e9aa8;
+}
 
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-sub);
+    font-family: system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Background Particle Engine Canvas */
+#particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.hero-scene, .menu-container {
+    position: relative;
+    z-index: 2;
+}
+
+/* 🌌 Hero Float Animation */
+.hero-scene {
+    height: 50vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.glitch-text {
+    font-size: 4rem;
+    font-weight: 900;
+    color: var(--text-main);
+    text-shadow: 0 0 10px var(--neon-pink), 0 0 30px var(--neon-pink);
+    animation: floatingText 4s ease-in-out infinite alternate;
+}
+
+/* 🍔 3D Tilting Menu Interface Grid Layout */
+.menu-container {
+    max-width: 1100px;
+    margin: 0 auto 80px auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.menu-container h2 {
+    color: var(--text-main);
+    font-size: 2.2rem;
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+    margin-bottom: 50px;
+}
+
+.menu-grid {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+    perspective: 1000px; /* Activates depth for 3D card tilts */
+}
+
+.menu-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(0, 243, 255, 0.15);
+    padding: 40px 30px;
+    border-radius: 28px;
+    width: 290px;
+    transform-style: preserve-3d; /* Smooth 3D tilt geometry rendering */
+    transition: transform 0.15s ease-out, border-color 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.menu-card:hover {
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 30px rgba(255, 0, 127, 0.3);
+}
+
+.food-emoji {
+    font-size: 4.5rem;
+    margin-bottom: 20px;
+    transform: translateZ(40px); /* Pushes emoji out in 3D layer space */
+    transition: transform 0.3s ease;
+}
+
+.menu-card h3 {
+    color: var(--text-main);
+    font-size: 1.6rem;
+    transform: translateZ(25px);
+}
+
+.menu-card p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    transform: translateZ(15px);
+}
+
+/* Silky Ripple Button System */
+.order-btn {
+    background: transparent;
+    border: 2px solid var(--neon-cyan);
+    color: var(--text-main);
+    padding: 14px 0;
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 25px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    overflow: hidden;
+    transform: translateZ(30px);
+    transition: all 0.3s ease;
+}
+
+.order-btn:hover {
+    background: var(--neon-cyan);
+    color: var(--bg-dark);
+    box-shadow: 0 0 20px var(--neon-cyan);
+}
+
+/* 🎮 Spring Scale Overlay Layer Popup Architecture */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(3, 3, 5, 0.85);
+    backdrop-filter: blur(12px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+}
+
+.popup-content {
+    background: rgba(15, 18, 26, 0.95);
+    border: 2px solid var(--neon-pink);
+    padding: 50px 40px;
+    border-radius: 36px;
+    max-width: 480px;
+    width: 85%;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(255, 0, 127, 0.4);
+    /* Custom elastic spring entrance animation scale effect */
+    animation: springEntrance 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.ingredient-box {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+.ing-btn {
+    background: rgba(5, 5, 8, 0.7);
+    border: 2px solid var(--neon-purple);
+    color: var(--text-main);
+    padding: 12px 24px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.ing-btn:hover {
+    background: var(--neon-purple);
+    box-shadow: 0 0 15px var(--neon-purple);
+    transform: scale(1.08) translateY(-2px);
+}
+
+#cooking-pot {
+    background: #050508;
+    border: 2px dashed rgba(0, 243, 255, 0.3);
+    padding: 22px;
+    border-radius: 20px;
+    margin: 25px 0;
+    color: var(--neon-cyan);
+    font-family: monospace;
+    font-size: 1.1rem;
+    text-shadow: 0 0 5px rgba(0,243,255,0.5);
+}
+
+#game-status {
+    color: #00ffcc;
+    font-weight: bold;
+    margin-bottom: 25px;
+    font-size: 1.15rem;
+    line-height: 1.5;
+}
+
+.close-btn {
+    background: transparent;
+    border: 2px solid #525f6e;
+    color: var(--text-sub);
+    padding: 12px 35px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+    border-color: var(--text-main);
+    color: var(--text-main);
+}
+
+/* Animations Layout Core Parameters */
+@keyframes floatingText {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-15px); }
+}
+
+@keyframes springEntrance {
+    0% { transform: scale(0.4); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
