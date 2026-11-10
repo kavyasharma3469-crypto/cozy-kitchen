@@ -1,69 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Midnight Arcade Cloud Kitchen</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pink Pot Kitchen</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Smooth Neon Particle Canvas Grid Layer -->
-    <canvas id="particle-canvas"></canvas>
-
-    <!-- Header Scene with Floating Text Animation -->
-    <header class="hero-scene">
-        <div class="welcome-banner">
-            <h1 class="glitch-text">NEON BITES 🌌</h1>
-            <p class="fade-in-sub">Late night luxury cravings, dispatched instantly.</p>
-        </div>
-    </header>
-
-    <!-- Premium Interactive Digital Menu Layout -->
-    <main class="menu-container">
-        <h2>Cyberpunk Chef Specials</h2>
-        <div class="menu-grid">
-            <div class="menu-card" onmousemove="tiltCard(event, this)" onmouseleave="resetCard(this)">
-                <div class="food-emoji">🍲</div>
-                <h3>Volcano Ramen</h3>
-                <p>Spicy chili broth, hand-pulled noodles, soft-boiled egg, matrix scallions.</p>
-                <button class="order-btn" onclick="triggerOrderFlow()">
-                    <span>Insta-Order</span>
-                </button>
-            </div>
-            
-            <div class="menu-card" onmousemove="tiltCard(event, this)" onmouseleave="resetCard(this)">
-                <div class="food-emoji">🍔</div>
-                <h3>Glitch Burger</h3>
-                <p>Toasted charcoal brioche, wagyu beef, neon cheddar, caramelized smoke onions.</p>
-                <button class="order-btn" onclick="triggerOrderFlow()">
-                    <span>Insta-Order</span>
-                </button>
-            </div>
-        </div>
-    </main>
-
-    <!-- Spring-Animated Cooking Game Popup Arena -->
-    <div id="game-popup" class="popup-overlay hidden">
-        <div class="popup-content">
-            <div class="popup-glow-ring"></div>
-            <h2>Matrix Cooking Pot 🍳</h2>
-            <p>Processing order... Synthesize ingredients to unlock server discount codes:</p>
-            
-            <div class="ingredient-box">
-                <button class="ing-btn" onclick="selectIngredient('🍅 Tomato')">🍅 Tomato</button>
-                <button class="ing-btn" onclick="selectIngredient('🧀 Cheese')">🧀 Cheese</button>
-                <button class="ing-btn" onclick="selectIngredient('🍞 Dough')">🍞 Dough</button>
-                <button class="ing-btn" onclick="selectIngredient('🌿 Basil')">🌿 Basil</button>
-            </div>
-
-            <div id="cooking-pot">Matrix is empty... awaiting data input.</div>
-            <div id="game-status"></div>
-
-            <button class="close-btn" onclick="closeGame()">Eject Terminal</button>
-        </div>
+<section data-page="home" class="home on" id="home">
+  <div class="lamp" data-d="3"></div>
+  <div class="window" data-d="2"><i class="sun"></i></div>
+  <div class="shelf" data-d="4"><span>🫙</span><span>🪴</span><span>🫖</span></div>
+  <div class="fl" data-d="9" style="left:14%;top:52%"><span>🥔</span></div>
+  <div class="fl" data-d="7" style="left:80%;top:48%"><span>🌶️</span></div>
+  <div class="fl" data-d="11" style="left:24%;top:30%"><span>🧅</span></div>
+  <div class="fl" data-d="8" style="left:70%;top:34%"><span>🍅</span></div>
+  <div class="fl" data-d="6" style="left:88%;top:62%"><span>🧈</span></div>
+  <div class="fl" data-d="10" style="left:6%;top:70%"><span>✨</span></div>
+  <h1>Pink Pot Kitchen</h1>
+  <p class="tag">Cozy food, cooked slow, delivered warm.</p>
+  <div class="stage">
+    <div class="stove" data-d="5">
+      <div class="puff" style="left:36px;animation-delay:0s"></div>
+      <div class="puff" style="left:62px;animation-delay:1s"></div>
+      <div class="puff" style="left:88px;animation-delay:2s"></div>
+      <div class="spoon">🥄</div>
+      <div class="pot" id="pot" title="Poke me!" tabindex="0">
+        <div class="eye l"><i class="pupil"></i></div><div class="eye r"><i class="pupil"></i></div>
+        <i class="cheek l"></i><i class="cheek r"></i><i class="mouth"></i>
+      </div>
+      <div class="hob"></div>
     </div>
+  </div>
+  <nav class="signs">
+    <button class="sign" data-go="menu"><b>🍽️</b><span>Menu</span></button>
+    <button class="sign" data-go="track"><b>🛵</b><span>Track your order</span></button>
+    <button class="sign" data-go="ratings"><b>⭐</b><span>Ratings</span></button>
+    <button class="sign" data-go="about"><b>💌</b><span>About us</span></button>
+  </nav>
+  <div class="counter"></div>
+</section>
 
-    <script src="game.js"></script>
+<header class="top" id="top" hidden>
+  <a class="logo" href="#home">🍳 Pink Pot Kitchen</a>
+  <nav><a href="#menu">Menu</a><a href="#track">Track order</a><a href="#ratings">Ratings</a><a href="#about">About us</a></nav>
+</header>
+
+<section data-page="menu"><div class="wrap">
+  <h2>Today’s menu</h2><p>Everything is made to order in our little pink kitchen.</p>
+  <div class="grid" id="menugrid"></div>
+</div></section>
+
+<section data-page="track"><div class="wrap">
+  <h2>Track your order</h2><div id="trackbody"></div>
+</div></section>
+
+<section data-page="ratings"><div class="wrap">
+  <h2>Ratings</h2>
+  <div class="card">
+    <div class="fr" id="avg" style="font-size:1.3rem"></div>
+    <div class="stars" id="stars" aria-label="Choose a rating"></div>
+    <input id="rname" placeholder="Your name" maxlength="30">
+    <textarea id="rtext" rows="3" placeholder="How was your food?" maxlength="200"></textarea>
+    <button class="btn" id="rsend">Post my rating</button>
+  </div>
+  <div id="revs"></div>
+</div></section>
+
+<section data-page="about"><div class="wrap">
+  <h2>About us</h2>
+  <div class="card"><p>Pink Pot Kitchen is a cloud kitchen: no dining room, just a warm stove, a small team and food packed to arrive hot. We cook every order fresh, using recipes that taste like home.</p></div>
+  <div class="grid">
+    <div class="card dish"><span class="em">🥘</span><h3>Cooked fresh</h3><p>Nothing sits waiting under a lamp.</p></div>
+    <div class="card dish"><span class="em">🛵</span><h3>Delivered warm</h3><p>Packed in insulated boxes, usually within 30 minutes.</p></div>
+    <div class="card dish"><span class="em">🕘</span><h3>Open daily</h3><p>11 am to 11 pm, every day.</p></div>
+  </div>
+</div></section>
+
+<div class="cartbar" id="cartbar"><span id="carttxt"></span><button class="btn" id="place">Place order</button></div>
+
+<div class="modal" id="modal"><div class="box" id="mbox"></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="game.js"></script>
 </body>
 </html>
