@@ -20,45 +20,72 @@ addEventListener("hashchange",route);
 $$("[data-go]").forEach(b=>b.onclick=()=>location.hash=b.dataset.go);
 
 /* home kitchen */
-const room=$("#room"),bub=$("#bubble");
-$$("[data-box]").forEach(el=>{
-  const [l,t,w,h]=el.dataset.box.split(",").map(Number);
-  if(!el.classList.contains("door"))Object.assign(el.style,{left:l+"%",top:t+"%",width:w+"%",height:h+"%"});
-  Object.assign(el.style,{backgroundSize:(10000/w)+"% "+(10000/h)+"%",backgroundPosition:(l/(100-w)*100)+"% "+(t/(100-h)*100)+"%"});
-});
-const box=el=>el.dataset.box.split(",").map(Number);
-function say(el,txt,ms){const b=box(el);bub.textContent=txt;bub.style.left=(b[0]+b[2]/2)+"%";bub.style.top=b[1]+"%";bub.classList.add("on");clearTimeout(say.t);say.t=setTimeout(()=>bub.classList.remove("on"),ms||2000)}
-function puff(el,emoji,n){const b=box(el);for(let i=0;i<n;i++){const s=document.createElement("span");s.className="part";s.textContent=emoji;s.style.left=(b[0]+Math.random()*b[2])+"%";s.style.top=(b[1]+b[3]*.3)+"%";s.style.setProperty("--dx",(Math.random()*40-20)+"px");s.style.animationDelay=(i*120)+"ms";room.appendChild(s);setTimeout(()=>s.remove(),1800+i*120)}}
+const BW=736,BH=413,room=$("#room"),mn=$("#menus"),touch=!matchMedia("(hover:hover)").matches;
+const pc=el=>{const[x,y,w,h]=el.dataset.box.split(",").map(Number);return[x/BW*100,y/BH*100,w/BW*100,h/BH*100]};
+function skin(el,clone){const[l,t,w,h]=pc(el);
+  if(!clone)Object.assign(el.style,{left:l+"%",top:t+"%",width:w+"%",height:h+"%"});
+  if(clone||el.classList.contains("hs"))Object.assign(el.style,{backgroundSize:(10000/w)+"% "+(10000/h)+"%",backgroundPosition:(l/(100-w)*100)+"% "+(t/(100-h)*100)+"%"});}
+$$("#room [data-box]").forEach(el=>skin(el,false));
+function puff(el,emoji,n){const b=pc(el);for(let i=0;i<n;i++){const s=document.createElement("span");s.className="part";s.textContent=emoji;s.style.left=(b[0]+Math.random()*b[2])+"%";s.style.top=(b[1]+b[3]*.2)+"%";s.style.setProperty("--dx",(Math.random()*30-15)+"px");s.style.animationDelay=(i*120)+"ms";room.appendChild(s);setTimeout(()=>s.remove(),1800+i*120)}}
 let ac;
-function tone(f1,f2,dur,type,vol){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();const t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain(),l=ac.createOscillator(),lg=ac.createGain();o.type=type;o.frequency.setValueAtTime(f1,t);o.frequency.linearRampToValueAtTime(f2,t+dur);l.frequency.value=14;lg.gain.value=40;l.connect(lg);lg.connect(o.frequency);g.gain.setValueAtTime(vol,t);g.gain.linearRampToValueAtTime(0,t+dur);o.connect(g);g.connect(ac.destination);o.start();l.start();o.stop(t+dur);l.stop(t+dur)}catch(e){}}
-const vib=(el,ms)=>{el.classList.add("vib");setTimeout(()=>el.classList.remove("vib"),ms)};
+function tone(f,dur,vol){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();const t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;g.gain.setValueAtTime(vol,t);g.gain.linearRampToValueAtTime(0,t+dur);o.connect(g);g.connect(ac.destination);o.start();o.stop(t+dur)}catch(e){}}
 
-const kettle=$("#kettle");
-kettle.onpointerenter=()=>{vib(kettle,600);puff(kettle,"☁️",2)};
-kettle.onclick=()=>{vib(kettle,1800);puff(kettle,"☁️",6);tone(1500,2100,1.5,"sine",.15);say(kettle,"Tea’s ready! ☕",2000)};
+/* doors, drawers and appliances: [id, box in image px, hinge, glows, contents] */
+const UNITS=[
+ ["cab1","388,70,60,63","l",0,"🍯🫙|🥣🍵"],
+ ["cab2","450,70,58,63","r",0,"🍽️🥛|🧂🫖"],
+ ["fridge","515,118,128,252","r",0,"🥛🧀🍎|🥚🥕🍋|🍓🍰🧃"],
+ ["drwA","374,248,59,23","d",1,"🍴🥄🔪"],
+ ["drwB","436,248,75,23","d",1,"🧁🍪🍩"],
+ ["micro","624,183,31,72","l",1,"🍲"],
+ ["oven","681,172,55,96","b",1,"🍞🍞"]];
+UNITS.forEach(([id,b,h,lit,items])=>{
+  const u=document.createElement("div");u.id=id;u.dataset.box=b;
+  u.className="unit"+(lit?" lit":"")+(id==="drwB"?" hub":"");
+  u.innerHTML=`<div class="inside k${h}">${items.split("|").map(r=>`<p>${r}</p>`).join("")}</div><button class="dr h${h}${id==="drwB"?" pulse":""}" data-box="${b}" aria-label="Open ${id}"></button>`;
+  room.insertBefore(u,$(".scrim"));skin(u,false);skin(u.querySelector(".dr"),true);
+  u.querySelector(".dr").onclick=()=>{
+    if(id==="drwB"){menusOpen(!mn.classList.contains("open"));return}
+    u.classList.toggle("open");if(u.classList.contains("open")&&lit)tone(1200,.25,.08);
+  };
+});
 
-const mixer=$("#mixer");
-mixer.onpointerenter=()=>{mixer.classList.add("vib");puff(mixer,"✨",3)};
-mixer.onpointerleave=()=>mixer.classList.remove("vib");
-mixer.onclick=()=>{puff(mixer,"🧁",4);tone(90,140,1,"sawtooth",.08);say(mixer,"Whipping up something sweet…",2000)};
+/* tap, coffee pot, plant */
+const tap=$("#tap"),pot=$("#pot"),plant=$("#plant");let cft=0;
+tap.onpointerenter=()=>{if(!touch)room.classList.add("wtr")};
+tap.onpointerleave=()=>room.classList.remove("wtr");
+tap.onclick=()=>{if(touch)room.classList.toggle("wtr")};
+const cfOn=()=>{room.classList.add("cf");pot.classList.add("vib");if(!cft)cft=setInterval(()=>puff(pot,"☁️",1),450)};
+const cfOff=()=>{room.classList.remove("cf");pot.classList.remove("vib");clearInterval(cft);cft=0};
+pot.onpointerenter=()=>{if(!touch)cfOn()};
+pot.onpointerleave=cfOff;
+pot.onclick=()=>{if(touch)room.classList.contains("cf")?cfOff():cfOn()};
+plant.onpointerenter=()=>{plant.classList.remove("sway");void plant.offsetWidth;plant.classList.add("sway")};
 
-const fr=$("#fridge");
-$("#fridge .door").onclick=()=>{fr.classList.toggle("open");if(fr.classList.contains("open"))say(fr,"Chilled desserts inside! 🍓",1800)};
-$$("#fridge .inside button").forEach(b=>b.onclick=()=>toast(b.dataset.t));
+/* curtains follow the cursor: move right to close, left to open */
+const cl=$("#cl"),cr=$("#cr");
+room.addEventListener("pointermove",e=>{
+  const r=room.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*BW,y=(e.clientY-r.top)/r.height*BH;
+  if(x>150&&x<395&&y>65&&y<215){
+    const t=Math.min(1,Math.max(0,(x-165)/215));
+    cl.style.width=((39+69*t)/BW*100)+"%";cr.style.width=((53+51*t)/BW*100)+"%";
+    cl.classList.add("on");cr.classList.add("on");
+  }
+});
 
-const dr=$("#drawer"),mn=$("#menus");
+/* menu drawer: the four options fly out of it */
+const dB=$("#drwB"),dBtn=dB.querySelector(".dr");
 function menusOpen(on){
   if(on){
     mn.classList.add("open","nt");
-    const d=dr.getBoundingClientRect(),dx=d.left+d.width/2,dy=d.top+d.height/2;
+    const d=dBtn.getBoundingClientRect(),dx=d.left+d.width/2,dy=d.top+d.height/2;
     $$(".sign",mn).forEach((s,i)=>{s.style.setProperty("--i",i);const r=s.getBoundingClientRect();s.style.setProperty("--fx",(dx-(r.left+r.width/2))+"px");s.style.setProperty("--fy",(dy-(r.top+r.height/2))+"px")});
     mn.classList.remove("open");void mn.offsetWidth;mn.classList.remove("nt");void mn.offsetWidth;mn.classList.add("open");
   }else mn.classList.remove("open");
-  room.classList.toggle("mo",on);dr.classList.toggle("open",on);dr.classList.remove("pulse");dr.setAttribute("aria-expanded",on);
+  room.classList.toggle("mo",on);dB.classList.toggle("open",on);
 }
-dr.onclick=()=>menusOpen(!mn.classList.contains("open"));
 $(".scrim").onclick=()=>menusOpen(false);
-addEventListener("hashchange",()=>{menusOpen(false);fr.classList.remove("open")});
+addEventListener("hashchange",()=>{menusOpen(false);$$(".unit.open").forEach(u=>u.classList.remove("open"))});
 
 /* menu + cart */
 $("#menugrid").innerHTML=MENU.map((m,i)=>`<div class="card dish"><span class="em">${m[1]}</span><h3>${m[0]}</h3><p class="d">${m[3]}</p><p><b>${money(m[2])}</b></p><button class="btn" data-add="${i}">Add to cart</button></div>`).join("");
